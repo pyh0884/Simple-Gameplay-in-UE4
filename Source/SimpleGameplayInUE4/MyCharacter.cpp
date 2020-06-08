@@ -2,6 +2,9 @@
 
 
 #include "MyCharacter.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/Actor.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AMyCharacter::AMyCharacter()
@@ -31,6 +34,7 @@ AMyCharacter::AMyCharacter()
 	FollowCamera->bUsePawnControlRotation = false;
 
 	bDead = false;
+	Health = 100.0f;
 }
 
 void AMyCharacter::MoveRight(float Axis)
@@ -57,11 +61,25 @@ void AMyCharacter::MoveForward(float Axis)
 	}
 }
 
+
+
+void AMyCharacter::RestartGame()
+{
+	UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()), false);
+}
+
 // Called when the game starts or when spawned
 void AMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AMyCharacter::OnBeginOverlap);
+
+	if (Player_Health_Widget_Class != nullptr) 
+	{
+		Player_Health_Widget = CreateWidget(GetWorld(),Player_Health_Widget_Class);
+		Player_Health_Widget->AddToViewport();
+	}
 }
 
 // Called every frame
@@ -69,6 +87,14 @@ void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	Health -= DeltaTime * Health_Treshold;
+	if (Health <= 0 && !bDead) 
+	{
+		bDead = true;
+		GetMesh()->SetSimulatePhysics(true);
+		FTimerHandle UnusedHandle;
+		GetWorldTimerManager().SetTimer(UnusedHandle, this, &AMyCharacter::RestartGame, 3.0f, false);
+	}
 }
 
 // Called to bind functionality to input
@@ -85,5 +111,21 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAxis("MoveForward", this, &AMyCharacter::MoveForward);
 
 
+}
+
+void AMyCharacter::OnBeginOverlap(UPrimitiveComponent* HitComp,
+	AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor->ActorHasTag("Heal"))
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("Collide with %s"), *OtherActor->GetFName().ToString());
+		Health += 10.0f;
+		if (Health > 100.0f)
+		{
+			Health = 100.0f;
+			OtherActor->Destroy();
+		}
+	}
 }
 

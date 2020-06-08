@@ -41,6 +41,15 @@ public:
 		float Health;
 	UPROPERTY(EditAnywhere)
 		float Health_Treshold;
+	UFUNCTION()
+		void OnBeginOverlap(class UPrimitiveComponent* HitComp,
+			class AActor* OtherActor, class UPrimitiveComponent* OtherComp,
+			int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UPROPERTY(EditAnywhere, Category = "UI HUD")
+		TSubclassOf<UUserWidget> Player_Health_Widget_Class;
+	UUserWidget* Player_Health_Widget;
+
+	void RestartGame();
 
 protected:
 	// Called when the game starts or when spawned
