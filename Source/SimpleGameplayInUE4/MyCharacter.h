@@ -5,7 +5,15 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 
-	
+#include "Camera/CameraComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Components/InputComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/Controller.h"
+#include "GameFramework/SpringArmComponent.h"
+
+#include "Blueprint/UserWidget.h"
 
 
 
@@ -19,6 +27,20 @@ class SIMPLEGAMEPLAYINUE4_API AMyCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AMyCharacter();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+		USpringArmComponent* CameraBoom;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+		UCameraComponent* FollowCamera;
+
+	void MoveRight(float Axis);
+	void MoveForward(float Axis);
+	bool bDead;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		float Health;
+	UPROPERTY(EditAnywhere)
+		float Health_Treshold;
 
 protected:
 	// Called when the game starts or when spawned
