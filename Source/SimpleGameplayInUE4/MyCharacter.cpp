@@ -119,12 +119,12 @@ void AMyCharacter::OnBeginOverlap(UPrimitiveComponent* HitComp,
 {
 	if (OtherActor->ActorHasTag("Heal"))
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("Collide with %s"), *OtherActor->GetFName().ToString());
+		UE_LOG(LogTemp, Warning, TEXT("Collide with %s"), *OtherActor->GetFName().ToString());
 		Health += 10.0f;
+		OtherActor->Destroy();
 		if (Health > 100.0f)
 		{
-			Health = 100.0f;
-			OtherActor->Destroy();
+			Health = 100.0f;			
 		}
 	}
 }
