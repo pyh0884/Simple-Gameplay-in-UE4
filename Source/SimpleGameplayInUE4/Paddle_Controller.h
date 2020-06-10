@@ -9,9 +9,7 @@
 
 #include "Paddle_Controller.generated.h"
 
-/**
- * 
- */
+class ABall;
 UCLASS()
 class SIMPLEGAMEPLAYINUE4_API APaddle_Controller : public APlayerController
 {
@@ -24,5 +22,7 @@ class SIMPLEGAMEPLAYINUE4_API APaddle_Controller : public APlayerController
 protected:
 	virtual void BeginPlay() override;
 	void MoveHorizontal(float AxisValue);
-
+	void Launch();
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<ABall> Ballobj;
 };
